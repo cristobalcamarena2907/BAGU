@@ -8,8 +8,8 @@ import CoreLocation
 
 class DonateClothesViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var clothType: String = "Camisa"
-    @Published var size: String = ""
-    @Published var contactInfo: String = ""
+    @Published var descriptionClothes: String = ""
+    //@Published var contactInfo: String = ""
     @Published var location: CLLocation?
     @Published var image: UIImage?
     @Published var showImagePicker: Bool = false
@@ -66,8 +66,8 @@ class DonateClothesViewModel: NSObject, ObservableObject, CLLocationManagerDeleg
     func sendDonation() {
         firebaseService.sendClothDonation(
             clothType: clothType,
-            size: size,
-            contactInfo: contactInfo,
+            descriptionClothes: descriptionClothes,
+            //contactInfo: contactInfo,
             location: location,
             image: image
         ) { error in

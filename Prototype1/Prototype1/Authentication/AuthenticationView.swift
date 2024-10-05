@@ -1,15 +1,14 @@
 import SwiftUI
-import FirebaseAuth
 
 struct AuthenticationView: View {
-    @State private var isLoggedIn = false
+    @StateObject private var viewModel = AuthenticationViewModel()
 
     var body: some View {
         NavigationView {
             VStack {
-                if isLoggedIn {
+                if viewModel.isLoggedIn {
                     // Si el usuario está autenticado, mostrar la ventana principal
-                    GuestView(isLoggedIn: $isLoggedIn, isVisitor: false)
+                    GuestView(viewModel: viewModel)
                 } else {
                     // Si no está autenticado, mostrar las opciones de login y registro
                     ZStack {
@@ -28,35 +27,35 @@ struct AuthenticationView: View {
                             Spacer()
 
                             VStack(spacing: 20) {
-                                NavigationLink(destination: LoginView(isLoggedIn: $isLoggedIn)) {
+                                NavigationLink(destination: LoginView(viewModel: viewModel)) {
                                     Text("Login")
                                         .font(.title2)
                                         .foregroundColor(.black)
                                         .padding()
-                                        .frame(width: 150, height: 50)
+                                        .frame(width: 200, height: 60)
                                         .background(Color.white)
                                         .cornerRadius(10)
                                 }
 
-                                NavigationLink(destination: RegisterView(isLoggedIn: $isLoggedIn)) {
+                                NavigationLink(destination: RegisterView(viewModel: viewModel)) {
                                     Text("Registro")
                                         .font(.title2)
                                         .foregroundColor(.black)
-                                        .frame(width: 150, height: 50)
+                                        .frame(width: 200, height: 60)
                                         .background(Color.white)
                                         .cornerRadius(10)
                                 }
 
-                                // En la opción de "Visitante":
-                                NavigationLink(destination: GuestView(isLoggedIn: $isLoggedIn, isVisitor: true).navigationBarBackButtonHidden(true)) {
-                                    Text("Visitante")
-                                        .font(.title2)
-                                        .foregroundColor(.black)
-                                        .padding()
-                                        .frame(width: 150,height: 50)
-                                        .background(Color.white)
-                                        .cornerRadius(10)
-                                }
+                                // Opción de "Visitante":
+                                //NavigationLink(destination: GuestView(viewModel: viewModel).navigationBarBackButtonHidden(true)) {
+                                  //  Text("Visitante")
+                                    //    .font(.title2)
+                                     //   .foregroundColor(.black)
+                                       // .padding()
+                                        //.frame(width: 150,height: 50)
+                                        //.background(Color.white)
+                                        //.cornerRadius(10)
+                                //}
                             }
 
                             Spacer()

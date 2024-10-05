@@ -15,11 +15,11 @@ class FirebaseService {
     private let storage = Storage.storage()
 
     // Método para subir los datos a Firestore
-    func sendClothDonation(clothType: String, size: String, contactInfo: String, location: CLLocation?, image: UIImage?, completion: @escaping (Error?) -> Void) {
+    func sendClothDonation(clothType: String, descriptionClothes: String, location: CLLocation?, image: UIImage?, completion: @escaping (Error?) -> Void) {
         var donationData: [String: Any] = [
             "clothType": clothType,
-            "size": size,
-            "contactInfo": contactInfo,
+            "descriptionClothes": descriptionClothes,
+            //"contactInfo": contactInfo,
             "timestamp": Timestamp()
         ]
 
@@ -64,6 +64,26 @@ class FirebaseService {
                         completion(nil, error)
                     }
                 }
+            }
+        }
+    }
+    
+    //Método para subir los datos personales a la firebase
+    func saveUserData(name: String, lastName: String, phoneNumber: Int, email: String, password: String, completion: @escaping (Error?) -> Void) {
+        let personalData: [String: Any] = [
+            "name": name,
+            "lastName": lastName,
+            "phoneNumber": phoneNumber,
+            "email": email,
+            "password": password
+        ]
+        db.collection("users").document(email).setData(personalData) { error in
+            if let error = error {
+                print("Error al guardar los datos: \(error.localizedDescription)")
+                completion(error) // Devolver el error en el completion handler
+            } else {
+                print("Datos guardados exitosamente")
+                completion(nil) // Llamar el completion sin error
             }
         }
     }

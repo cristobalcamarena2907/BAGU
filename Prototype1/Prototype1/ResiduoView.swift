@@ -4,10 +4,16 @@ import FirebaseFirestore
 import FirebaseStorage
 import UIKit
 import CoreLocation
+import Combine
 
 struct ResiduoView: View {
     @StateObject private var viewModel = DonateClothesViewModel()
     @Environment(\.dismiss) var dismiss
+    
+    var isDescriptionValid: Bool {
+        // Asegúrate de que la descripción no esté vacía y tenga al menos 5 caracteres
+        !viewModel.descriptionClothes.isEmpty && viewModel.descriptionClothes.count >= 5
+    }
     
     var body: some View {
         NavigationView {
@@ -54,13 +60,27 @@ struct ResiduoView: View {
                         .pickerStyle(SegmentedPickerStyle())
                         .padding()
                         
-                        TextField("Talla de ropa (Ej: M, L, XL)", text: $viewModel.size)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding()
+                        TextField("Descripción de la ropa...", text: $viewModel.descriptionClothes)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 350, height: 30)
+                                .padding()
+                                .onReceive(Just(viewModel.descriptionClothes)) { newValue in
+                                // Filtrar caracteres no alfabéticos
+                                let filtered = newValue.filter { $0.isLetter || $0.isWhitespace }
+                                if filtered != newValue {
+                                    viewModel.descriptionClothes = filtered
+                                }
+                            }
                         
-                        TextField("Contacto (Email o Teléfono)", text: $viewModel.contactInfo)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding()
+                        if !isDescriptionValid {
+                            Text("La descripción debe tener al menos 5 caracteres.")
+                                .foregroundColor(.white)
+                                .font(.footnote)
+                        }
+                        
+                        //TextField("Contacto (Email o Teléfono)", text: $viewModel.contactInfo)
+                            //.textFieldStyle(RoundedBorderTextFieldStyle())
+                            //.padding()
                         
                         Text(viewModel.locationStatus)
                             .foregroundColor(.white)

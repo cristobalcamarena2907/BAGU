@@ -35,10 +35,29 @@ extension Color {
     }
 }
 
-struct GuestView: View {
-    @Binding var isLoggedIn: Bool
-    var isVisitor: Bool // Añadir una variable para indicar si es un visitante
+struct CardView: View {
+    var title: String
+    var color: Color
+            
+    var body: some View {
+        ZStack {
+            color
+                .cornerRadius(15)
+                .shadow(radius: 5)
+                    
+            Text(title)
+                .font(.title2)
+                .foregroundColor(.white)
+                .padding()
+        }
+        .frame(height: 150)
+    }
+}
 
+struct GuestView: View {
+    @ObservedObject var viewModel: AuthenticationViewModel
+    //var isVisitor: Bool// Añadir una variable para indicar si es un visitante
+    
     var body: some View {
         ZStack {
             Image("red-wp")
@@ -58,14 +77,10 @@ struct GuestView: View {
                         Spacer()
                         
                         Button(action: {
-                            if isVisitor {
-                                // Si es visitante, simplemente cerrar la vista
-                                isLoggedIn = false // Regresar a la vista de inicio
-                            } else {
-                                signOut() // Cerrar sesión si no es visitante
-                            }
+                                print("Cerrando sesión...")
+                                viewModel.signOut()
                         }) {
-                            Text(isVisitor ? "Salir" : "Cerrar sesión")
+                            Text("Cerrar sesión")
                                 .foregroundColor(.white)
                                 .padding()
                                 .background(Color.red)
@@ -100,36 +115,10 @@ struct GuestView: View {
             .navigationBarBackButtonHidden(true)
         }
     }
-    
-    func signOut() {
-        do {
-            try Auth.auth().signOut()
-            isLoggedIn = false // Actualizar el estado de autenticación
-        } catch let signOutError as NSError {
-            print("Error al cerrar sesión: \(signOutError.localizedDescription)")
-        }
-    }
-}
-
-struct CardView: View {
-    var title: String
-    var color: Color
-            
-    var body: some View {
-        ZStack {
-            color
-                .cornerRadius(15)
-                .shadow(radius: 5)
-                    
-            Text(title)
-                .font(.title2)
-                .foregroundColor(.white)
-                .padding()
-        }
-        .frame(height: 150)
-    }
 }
 
 #Preview {
-    GuestView(isLoggedIn: .constant(true), isVisitor: true) // Añadir isVisitor para el preview
+    // Crear un estado simulado para la vista previa
+    @StateObject var viewModel = AuthenticationViewModel()
+    return GuestView(viewModel: viewModel)
 }

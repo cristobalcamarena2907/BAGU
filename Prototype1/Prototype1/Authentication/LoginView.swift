@@ -1,21 +1,12 @@
-//
-//  LoginView.swift
-//  Prototype1
-//
-//  Created by Cristobal  Camarena on 02/10/24.
-//
-
 import SwiftUI
-import FirebaseAuth
 
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var errorMessage = ""
-    @Binding var isLoggedIn: Bool
+    @ObservedObject var viewModel: AuthenticationViewModel
     
     var body: some View {
-        
         ZStack {
             Image("red-wp")
                 .resizable()
@@ -35,6 +26,7 @@ struct LoginView: View {
                     Text("Login")
                         .font(.largeTitle)
                         .padding()
+                        .foregroundColor(.white)
                     
                     TextField("Email", text: $email)
                         .keyboardType(.emailAddress)
@@ -49,10 +41,10 @@ struct LoginView: View {
                         .cornerRadius(5)
                     
                     Button(action: {
-                        loginUser(email: email, password: password) { result in
+                        viewModel.loginUser(email: email, password: password) { result in
                             switch result {
                             case .success:
-                                isLoggedIn = true // Cambia el estado a logged in
+                                break // El estado se actualiza automáticamente
                             case .failure(let error):
                                 errorMessage = error.localizedDescription
                             }
@@ -83,6 +75,6 @@ struct LoginView: View {
 
 #Preview {
     // Crear un estado simulado para la vista previa
-    @State var isLoggedInPreview = false
-    return LoginView(isLoggedIn: $isLoggedInPreview)
+    @StateObject var viewModel = AuthenticationViewModel()
+    return LoginView(viewModel: viewModel)
 }
